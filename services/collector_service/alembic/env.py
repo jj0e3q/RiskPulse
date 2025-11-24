@@ -4,21 +4,18 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
 from app.db.base import Base
 from app.core.config import settings
-
-# Import all models here so Alembic can detect them for autogenerate
-from app.models.user import User  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# Override sqlalchemy.url with settings from config.py
-config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
+config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
+
 fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
@@ -27,8 +24,7 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# Use a separate version table for auth-service to avoid conflicts with other services
-version_table = "alembic_version_auth_service"
+version_table = "alembic_version_collector_service"
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -76,9 +72,9 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection,
+            connection=connection, 
             target_metadata=target_metadata,
-            version_table=version_table,
+            version_table=version_table
         )
 
         with context.begin_transaction():

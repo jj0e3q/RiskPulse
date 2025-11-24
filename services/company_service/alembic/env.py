@@ -8,17 +8,16 @@ from app.db.base import Base
 from app.core.config import settings
 
 # Import all models here so Alembic can detect them for autogenerate
-from app.models.user import User  # noqa: F401
+from app.models.company import Company  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# Override sqlalchemy.url with settings from config.py
-config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
+config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
+
 fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
@@ -27,8 +26,8 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# Use a separate version table for auth-service to avoid conflicts with other services
-version_table = "alembic_version_auth_service"
+# Use a separate version table for company_service to avoid conflicts with auth-service
+version_table = "alembic_version_company_service"
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

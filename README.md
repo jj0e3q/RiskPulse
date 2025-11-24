@@ -1,105 +1,68 @@
 # RiskPulse
-Automated Corporate Risk Scoring Engine
 
-## Infrastructure
+Automated corporate risk assessment system.
 
-This project uses Docker Compose to manage the following infrastructure services:
+## What is it
 
-- **PostgreSQL** (port 5432) - Main database
-- **Redis** (port 6379) - Caching and session storage
-- **Kafka** (port 9092) - Message broker
-- **Zookeeper** (port 2181) - Kafka coordination
+The system collects company data, processes it using NLP, and assesses risks. Built on microservices architecture with asynchronous communication via Kafka.
 
-## Quick Start
+## Technologies
 
-### Prerequisites
+- Python 3.11 + FastAPI
+- PostgreSQL for data storage
+- Redis for caching
+- Kafka for messaging between services
+- Docker for deployment
 
-- Docker and Docker Compose installed
-- Make (optional, for convenience commands)
+## Services
 
-### Starting Infrastructure
+**Gateway** — entry point, routes requests
 
-```bash
-# Start all services
-make up
-# or
-docker-compose up -d
+**Auth Service** — user registration and authorization
 
-# Check service status
-make ps
-# or
-docker-compose ps
+**Company Service** — company management and risk assessment requests
 
-# View logs
-make logs
-# or
-docker-compose logs -f
-```
+**Collector Service** — collects raw company data
 
-### Stopping Infrastructure
+**NLP Service** — processes and classifies events
 
-```bash
-# Stop all services
-make down
-# or
-docker-compose down
+## How it works
 
-# Stop and remove all data
-make clean
-# or
-docker-compose down -v
-```
+User requests a company risk assessment via API. The request goes to Kafka, where Collector Service picks it up, gathers data, and sends it forward. NLP Service processes this data and saves the results to the database.
 
-### Service Access
+---
 
-**PostgreSQL:**
-```bash
-make postgres-shell
-# or
-docker exec -it riskpulse-postgres psql -U riskpulse -d riskpulse
-```
+# RiskPulse
 
-**Redis:**
-```bash
-make redis-cli
-# or
-docker exec -it riskpulse-redis redis-cli
-```
+Система автоматической оценки корпоративных рисков компаний.
 
-**Kafka:**
-```bash
-make kafka-topics
-# or
-docker exec -it riskpulse-kafka kafka-topics --list --bootstrap-server localhost:9092
-```
+## Что это
 
-### Health Checks
+Система собирает данные о компаниях, обрабатывает их с помощью NLP и оценивает риски. Построена на микросервисной архитектуре с асинхронным общением через Kafka.
 
-```bash
-make health
-```
+## Технологии
 
-## Project Structure
+- Python 3.11 + FastAPI
+- PostgreSQL для хранения данных
+- Redis для кэширования
+- Kafka для обмена сообщениями между сервисами
+- Docker для запуска
 
-```
-risk-project/
-├── infra/              # Infrastructure configuration
-│   ├── postgres/       # PostgreSQL initialization scripts
-│   ├── kafka/          # Kafka configuration
-│   └── redis/          # Redis configuration
-├── docker-compose.yml  # Docker Compose configuration
-├── Makefile           # Convenience commands
-└── README.md          # This file
-```
+## Сервисы
 
-## Environment Variables
+**Gateway** — точка входа, маршрутизирует запросы
 
-Default connection settings (can be overridden via environment variables):
+**Auth Service** — регистрация и авторизация пользователей
 
-- **PostgreSQL**: `localhost:5432`, user: `riskpulse`, password: `riskpulse`, database: `riskpulse`
-- **Redis**: `localhost:6379`
-- **Kafka**: `localhost:9092`
+**Company Service** — управление компаниями и запросы на оценку рисков
 
-## Development
+**Collector Service** — собирает сырые данные о компаниях
 
-For development, you can create a `.env` file in the root directory to override default settings.
+**NLP Service** — обрабатывает и классифицирует события
+
+## Как работает
+
+Пользователь запрашивает оценку риска компании через API. Запрос попадает в Kafka, где его подхватывает Collector Service, собирает данные и отправляет дальше. NLP Service обрабатывает эти данные и сохраняет результаты в базу.
+
+
+

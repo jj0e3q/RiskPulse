@@ -6,6 +6,10 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "RiskPulse API Gateway"
 
     AUTH_SERVICE_URL: AnyHttpUrl = "http://auth_service:8000"
+    COMPANY_SERVICE_URL: AnyHttpUrl = "http://company_service:8000"
+
+    JWT_SECRET_KEY: str = "CHANGE_ME_IN_PROD"
+    JWT_ALGORITHM: str = "HS256"
 
     class Config:
         env_file = ".env"

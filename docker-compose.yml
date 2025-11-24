@@ -119,12 +119,72 @@ services:
     restart: unless-stopped
     networks:
       - riskpulse-network
+
+  company_service:
+    build: ./services/company_service
+    container_name: riskpulse-company-service
+    environment:
+      DATABASE_URL: postgresql+psycopg2://riskpulse:riskpulse@postgres:5432/riskpulse
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+      KAFKA_SCORE_REQUEST_TOPIC: company.score_requested
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8002:8000"  # для локальной отладки: http://localhost:8002
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - riskpulse-network
+
+  collector_service:
+    build: ./services/collector_service
+    container_name: riskpulse-collector-service
+    environment:
+      DATABASE_URL: postgresql+psycopg2://riskpulse:riskpulse@postgres:5432/riskpulse
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9093"
+      KAFKA_SCORE_REQUEST_TOPIC: "company.score_requested"
+      KAFKA_CONSUMER_GROUP_ID: "collector-service"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - riskpulse-network
     
+  nlp_service:
+    build: ./services/nlp_service
+    container_name: riskpulse-nlp-service
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9093"
+      KAFKA_DATA_COLLECTED_TOPIC: "company.data_collected"
+      KAFKA_CONSUMER_GROUP_ID: "nlp-service"
+      DATABASE_URL: "postgresql+psycopg2://riskpulse:riskpulse@postgres:5432/riskpulse"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - riskpulse-network
+
+
   gateway:
     build: ./services/gateway
     container_name: riskpulse-gateway
     environment:
       AUTH_SERVICE_URL: "http://auth_service:8000"
+      COMPANY_SERVICE_URL: "http://company_service:8000"
+
+      JWT_SECRET_KEY: "CHANGE_ME_IN_PROD"
+      JWT_ALGORITHM: "HS256"
     depends_on:
       auth_service:
         condition: service_healthy

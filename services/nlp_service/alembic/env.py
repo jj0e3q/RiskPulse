@@ -8,7 +8,7 @@ from app.db.base import Base
 from app.core.config import settings
 
 # Import all models here so Alembic can detect them for autogenerate
-from app.models.user import User  # noqa: F401
+from app.models.normalized_event import NormalizedEvent  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,10 +27,10 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# Use a separate version table for auth-service to avoid conflicts with other services
-version_table = "alembic_version_auth_service"
+# Use a separate version table for nlp_service to avoid conflicts with other services
+version_table = "alembic_version_nlp_service"
 
-# other values from the config, defined by the needs of env.py,
+    # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
@@ -76,7 +76,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection,
+            connection=connection, 
             target_metadata=target_metadata,
             version_table=version_table,
         )
