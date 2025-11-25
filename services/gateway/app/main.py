@@ -4,7 +4,7 @@ import httpx
 import logging
 
 from app.core.config import settings
-from app.clients import auth as auth_client
+from app.clients import auth as auth_client, scoring as scoring_client
 from app.clients import company as company_client
 from app.api.deps import get_current_user_id
 
@@ -56,8 +56,6 @@ async def gateway_register(request: Request):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error calling auth service: {str(e)}"
         )
-
-    # прокидываем статус и тело как есть
     try:
         content = resp.json() if resp.content else {}
     except Exception:
@@ -204,13 +202,6 @@ async def gateway_request_score(
     request: Request,
     user_id: str = Depends(get_current_user_id),
 ):
-    """
-    Внешняя ручка:
-    - принимает BIN (и опционально name),
-    - валидирует JWT,
-    - прокидывает X-User-Id в company_service,
-    - тот кидает событие в Kafka.
-    """
     try:
         payload = await request.json()
     except Exception as e:
@@ -242,6 +233,42 @@ async def gateway_request_score(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error calling company service: {str(e)}"
+        )
+
+    try:
+        content = resp.json() if resp.content else {}
+    except Exception:
+        content = {"detail": resp.text} if resp.text else {"detail": "Unknown error"}
+
+    return JSONResponse(
+        status_code=resp.status_code,
+        content=content,
+    )
+
+@app.get("/score/{company_id}", tags=["score"])
+async def gateway_get_score(
+    company_id: str,
+    user_id: str = Depends(get_current_user_id)
+):
+    try:
+        resp = await scoring_client.get_company_score(company_id)
+    except httpx.ConnectError as e:
+        logger.error(f"Failed to connect to scoring service: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Scoring service is unavailable"
+        )
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout connecting to scoring service: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            detail="Scoring service request timeout"
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error calling scoring service: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error calling scoring service: {str(e)}"
         )
 
     try:

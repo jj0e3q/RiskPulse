@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     KAFKA_BOOTSTRAP_SERVERS: str = "kafka:9093"
     KAFKA_DATA_COLLECTED_TOPIC: str = "company.data_collected"
+    KAFKA_SIGNALS_READY_TOPIC: str = "company.signals_ready"
     KAFKA_CONSUMER_GROUP_ID: str = "nlp-service"
 
     class Config:

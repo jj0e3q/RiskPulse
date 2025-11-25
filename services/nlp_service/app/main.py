@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import SessionLocal
 from app.kafka.consumer import create_consumer
+from app.kafka.producer import send_signals_ready_event
 from app.services.nlp_engine import classify_events
 from app.services.normalized_event_service import save_normalized_events
 
@@ -16,16 +17,8 @@ logging.basicConfig(
 
 
 def fetch_raw_events_for_company(db: Session, company_id: str) -> list[dict]:
-    """
-    Пока для простоты можно:
-    - либо читать из raw_events таблицы той же БД (если она общая),
-    - либо имитировать список на основе события.
-
-    Предположим, что raw_events в том же Postgres и под тем же юзером.
-    """
-
     from sqlalchemy import select
-    from app.models.raw_event import RawEvent  # можешь шарить модель, если она в общем libs
+    from app.models.raw_event import RawEvent
 
     stmt = select(RawEvent).where(RawEvent.company_id == company_id)
     rows = db.execute(stmt).scalars().all()
@@ -65,10 +58,16 @@ def run():
 
                 normalized = classify_events(raw_events)
                 save_normalized_events(db, normalized)
+                signals_count = len(normalized)
                 logging.info(
                     "Saved %s normalized events for company_id=%s",
                     len(normalized),
                     company_id,
+                )
+                send_signals_ready_event(
+                    company_id=company_id,
+                    bin_value=bin_value,
+                    signals_count=signals_count,
                 )
             except Exception as e:
                 logging.error("Error processing data_collected event: %s", e)

@@ -1,15 +1,15 @@
 import logging
 import threading
 import time
-from typing import Optional
+from typing import Generator
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.db.session import SessionLocal
 from app.kafka.consumer import create_consumer
+from app.schemas.company_score import CompanyScoreRead
 from app.services.company_score_service import (
     calculate_and_save_score,
     get_latest_score,
@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 app = FastAPI(title=settings.PROJECT_NAME)
 
 
-def get_db() -> Session:
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
@@ -66,16 +66,15 @@ def health_check():
     return {"status": "ok", "service": "scoring_service"}
 
 
-@app.get("/scores/{company_id}", tags=["scores"])
-def get_company_score(company_id: str):
-    db = next(get_db())
-    score = get_latest_score(db, company_id)
-    if not score:
-        raise HTTPException(status_code=404, detail="Score not found for this company")
-    return {
-        "company_id": score.company_id,
-        "total_score": score.total_score,
-        "risk_level": score.risk_level,
-        "details": score.details,
-        "calculated_at": score.calculated_at,
-    }
+@app.get("/scores/{company_id}", response_model=CompanyScoreRead, tags=["scores"])
+def get_company_score(company_id: str, db: Session = Depends(get_db)):
+    try:
+        score = get_latest_score(db, company_id)
+        if not score:
+            raise HTTPException(status_code=404, detail="Score not found for this company")
+        return score
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error getting score for company_id={company_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")

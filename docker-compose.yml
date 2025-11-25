@@ -175,11 +175,30 @@ services:
     networks:
       - riskpulse-network
 
+  scoring_service:
+    build: ./services/scoring_service
+    container_name: riskpulse-scoring-service
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9093"
+      KAFKA_SIGNALS_READY_TOPIC: "company.signals_ready"
+      KAFKA_CONSUMER_GROUP_ID: "scoring-service"
+      DATABASE_URL: "postgresql+psycopg2://riskpulse:riskpulse@postgres:5432/riskpulse"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8003:8000"
+    restart: unless-stopped
+    networks:
+      - riskpulse-network
 
   gateway:
     build: ./services/gateway
     container_name: riskpulse-gateway
     environment:
+      SCORING_SERVICE_URL: "http://scoring_service:8000"
       AUTH_SERVICE_URL: "http://auth_service:8000"
       COMPANY_SERVICE_URL: "http://company_service:8000"
 

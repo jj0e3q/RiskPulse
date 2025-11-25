@@ -16,12 +16,6 @@ logging.basicConfig(
 )
 
 def process_message(db: Session, event: dict) -> None:
-    """
-    Здесь пока просто сохраняем raw событие.
-    Дальше сюда можно добавить:
-    - вызовы внешних источников (новости/тендеры),
-    - генерацию новых ивентов типа company.data_collected.
-    """
     company_id = event.get("company_id")
     bin_value = event.get("bin")
     requested_by = event.get("requested_by")
