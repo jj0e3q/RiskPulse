@@ -1,17 +1,13 @@
-from pydantic_settings import BaseSettings
+from shared.core.config import BaseAppSettings
+from shared.core.events import TOPIC_SCORE_REQUESTED
 
 
-class Settings(BaseSettings):
+class Settings(BaseAppSettings):
+    SERVICE_NAME: str = "company_service"
+
     PROJECT_NAME: str = "RiskPulse"
 
-    DATABASE_URL: str = "postgresql+psycopg2://riskpulse:riskpulse@localhost:5432/riskpulse"
-
-    KAFKA_BOOTSTRAP_SERVERS: str = "kafka:9093"
-    KAFKA_SCORE_REQUEST_TOPIC: str = "company.score_requested"
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    KAFKA_SCORE_REQUEST_TOPIC: str = TOPIC_SCORE_REQUESTED
 
 
 settings = Settings()

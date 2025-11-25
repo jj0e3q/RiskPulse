@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 from kafka import KafkaConsumer, KafkaProducer
 

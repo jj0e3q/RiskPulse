@@ -8,12 +8,10 @@ from app.db.session import SessionLocal
 from app.kafka.consumer import create_consumer
 from app.kafka.producer import send_data_collected_event
 from app.services.raw_event_service import save_raw_event
+from shared.core.logging import setup_logging
 
+setup_logging(settings.SERVICE_NAME)
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-)
 
 def process_message(db: Session, event: dict) -> None:
     company_id = event.get("company_id")
@@ -33,15 +31,16 @@ def process_message(db: Session, event: dict) -> None:
         source="score_request",
         payload=event,
     )
-    
+
     collected_sources = ["score_request"]
-    
+
     send_data_collected_event(
         company_id=company_id,
         bin_value=bin_value,
         requested_by=requested_by,
         collected_sources=collected_sources,
     )
+
 
 def run():
     logging.info("Starting Collector Service")

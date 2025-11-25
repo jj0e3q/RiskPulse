@@ -1,20 +1,15 @@
-from pydantic_settings import BaseSettings
-from pydantic import AnyUrl
+from shared.core.config import BaseAppSettings
+from shared.core.events import TOPIC_DATA_COLLECTED, TOPIC_SIGNALS_READY
 
 
-class Settings(BaseSettings):
+class Settings(BaseAppSettings):
+    SERVICE_NAME: str = "nlp_service"
+
     PROJECT_NAME: str = "RiskPulse NLP Service"
 
-    DATABASE_URL: str = "postgresql+psycopg2://riskpulse:riskpulse@localhost:5432/riskpulse"
-
-    KAFKA_BOOTSTRAP_SERVERS: str = "kafka:9093"
-    KAFKA_DATA_COLLECTED_TOPIC: str = "company.data_collected"
-    KAFKA_SIGNALS_READY_TOPIC: str = "company.signals_ready"
+    KAFKA_DATA_COLLECTED_TOPIC: str = TOPIC_DATA_COLLECTED
+    KAFKA_SIGNALS_READY_TOPIC: str = TOPIC_SIGNALS_READY
     KAFKA_CONSUMER_GROUP_ID: str = "nlp-service"
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 
 settings = Settings()

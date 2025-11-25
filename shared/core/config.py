@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class BaseAppSettings(BaseSettings):
+    """Base settings for all RiskPulse services."""
 
     DATABASE_URL: str = "postgresql+psycopg2://riskpulse:riskpulse@localhost:5432/riskpulse"
 

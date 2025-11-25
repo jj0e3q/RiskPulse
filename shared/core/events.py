@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -17,7 +17,8 @@ class CompanyScoreRequested(BaseModel):
     requested_by: Optional[str] = None
     requested_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary with ISO format datetime."""
         return {
             "event_type": self.event_type,
             "company_id": self.company_id,
@@ -35,7 +36,8 @@ class CompanyDataCollected(BaseModel):
     collected_sources: list[str]
     collected_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary with ISO format datetime."""
         return {
             "event_type": self.event_type,
             "company_id": self.company_id,
@@ -53,7 +55,8 @@ class CompanySignalsReady(BaseModel):
     signals_count: int
     ready_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary with ISO format datetime."""
         return {
             "event_type": self.event_type,
             "company_id": self.company_id,

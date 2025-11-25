@@ -14,8 +14,9 @@ from app.services.company_score_service import (
     calculate_and_save_score,
     get_latest_score,
 )
+from shared.core.logging import setup_logging
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+setup_logging(settings.SERVICE_NAME)
 
 app = FastAPI(title=settings.PROJECT_NAME)
 

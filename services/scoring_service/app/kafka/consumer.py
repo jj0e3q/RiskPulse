@@ -1,15 +1,12 @@
-import json
 from kafka import KafkaConsumer
 
 from app.core.config import settings
+from shared.core.kafka import create_consumer as create_kafka_consumer
 
 
 def create_consumer() -> KafkaConsumer:
-    consumer = KafkaConsumer(
-        settings.KAFKA_SIGNALS_READY_TOPIC,
-        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
+    return create_kafka_consumer(
+        settings,
+        topic=settings.KAFKA_SIGNALS_READY_TOPIC,
         group_id=settings.KAFKA_CONSUMER_GROUP_ID,
-        value_deserializer=lambda m: json.loads(m.decode("utf-8")),
-        enable_auto_commit=True,
-        auto_offset_reset="earliest",
-    )    return consumer
+    )

@@ -7,12 +7,9 @@ from app.core.config import settings
 from app.clients import auth as auth_client, scoring as scoring_client
 from app.clients import company as company_client
 from app.api.deps import get_current_user_id
+from shared.core.logging import setup_logging
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+setup_logging(settings.SERVICE_NAME)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(

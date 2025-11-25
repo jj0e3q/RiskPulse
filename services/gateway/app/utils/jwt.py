@@ -1,26 +1,23 @@
-from typing import Any, Dict
+from typing import Any
 
-import jwt
 from fastapi import HTTPException, status
 
 from app.core.config import settings
+from shared.core.jwt import decode_access_token
 
 
-def decode_jwt_token(token: str) -> Dict[str, Any]:
+def decode_jwt_token(token: str) -> dict[str, Any]:
     try:
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET_KEY,
-            algorithms=[settings.JWT_ALGORITHM],
-        )
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token has expired",
-        )
-    except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-        )
+        return decode_access_token(settings, token)
+    except ValueError as e:
+        error_msg = str(e)
+        if "expired" in error_msg.lower():
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has expired",
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token",
+            )

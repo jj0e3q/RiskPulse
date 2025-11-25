@@ -9,11 +9,9 @@ from app.kafka.consumer import create_consumer
 from app.kafka.producer import send_signals_ready_event
 from app.services.nlp_engine import classify_events
 from app.services.normalized_event_service import save_normalized_events
+from shared.core.logging import setup_logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-)
+setup_logging(settings.SERVICE_NAME)
 
 
 def fetch_raw_events_for_company(db: Session, company_id: str) -> list[dict]:
