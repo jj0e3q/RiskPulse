@@ -1,0 +1,35 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0' # Weekly scan on Sunday
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, company_service, collector_service, gateway, nlp_service, scoring_service]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install safety
+      run: |
+        pip install safety
+    
+    - name: Run safety check
+      working-directory: ./services/${{ matrix.service }}
+      run: |
+        safety check -r requirements.txt --json || true
+      continue-on-error: true
+
