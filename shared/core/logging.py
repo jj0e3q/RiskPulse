@@ -27,4 +27,3 @@ def setup_logging(
     root_logger.setLevel(level)
     root_logger.handlers.clear()
     root_logger.addHandler(handler)
-

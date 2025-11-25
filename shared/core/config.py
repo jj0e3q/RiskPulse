@@ -6,7 +6,9 @@ from pydantic_settings import BaseSettings
 class BaseAppSettings(BaseSettings):
     """Base settings for all RiskPulse services."""
 
-    DATABASE_URL: str = "postgresql+psycopg2://riskpulse:riskpulse@localhost:5432/riskpulse"
+    DATABASE_URL: str = (
+        "postgresql+psycopg2://riskpulse:riskpulse@localhost:5432/riskpulse"
+    )
 
     KAFKA_BOOTSTRAP_SERVERS: str = "kafka:9093"
 
@@ -19,4 +21,3 @@ class BaseAppSettings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
-

@@ -25,7 +25,7 @@ def process_message(db: Session, event: dict) -> None:
         requested_by,
     )
 
-    raw = save_raw_event(
+    save_raw_event(
         db,
         company_id=company_id,
         source="score_request",

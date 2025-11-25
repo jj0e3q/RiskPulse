@@ -1,2 +1,1 @@
 """RiskPulse Platform Core Modules"""
-

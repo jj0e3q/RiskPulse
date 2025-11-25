@@ -4,8 +4,6 @@
 def test_imports():
     """Test that main modules can be imported."""
     from app.core.config import settings
-    from app.kafka.consumer import create_consumer
-    from app.kafka.producer import send_signals_ready_event
 
     assert settings.SERVICE_NAME == "nlp_service"
 

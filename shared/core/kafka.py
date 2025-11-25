@@ -33,4 +33,3 @@ def create_consumer(
         enable_auto_commit=enable_auto_commit,
         auto_offset_reset=auto_offset_reset,
     )
-

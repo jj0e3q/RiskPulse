@@ -13,7 +13,9 @@ def create_access_token(
 ) -> str:
     if expires_delta is None:
         # Default to 24 hours if ACCESS_TOKEN_EXPIRE_MINUTES is not set
-        expires_delta = timedelta(minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60 * 24))
+        expires_delta = timedelta(
+            minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60 * 24)
+        )
 
     to_encode: dict[str, Any] = {
         "sub": subject,
@@ -41,4 +43,3 @@ def decode_access_token(
         raise ValueError("Token has expired")
     except jwt.InvalidTokenError:
         raise ValueError("Invalid token")
-

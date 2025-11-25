@@ -30,7 +30,7 @@ target_metadata = Base.metadata
 # Use a separate version table for nlp_service to avoid conflicts with other services
 version_table = "alembic_version_nlp_service"
 
-    # other values from the config, defined by the needs of env.py,
+# other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
@@ -76,7 +76,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, 
+            connection=connection,
             target_metadata=target_metadata,
             version_table=version_table,
         )

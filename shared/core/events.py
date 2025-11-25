@@ -64,4 +64,3 @@ class CompanySignalsReady(BaseModel):
             "signals_count": self.signals_count,
             "ready_at": self.ready_at.isoformat(),
         }
-
