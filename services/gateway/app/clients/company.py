@@ -27,7 +27,9 @@ async def create_company(
             logger.info(f"Company service responded with status {resp.status_code}")
             return resp
         except Exception as e:
-            logger.error(f"Error calling company service at {full_url}: {e}", exc_info=True)
+            logger.error(
+                f"Error calling company service at {full_url}: {e}", exc_info=True
+            )
             raise
 
 
@@ -47,7 +49,9 @@ async def get_company_by_bin(
             logger.info(f"Company service responded with status {resp.status_code}")
             return resp
         except Exception as e:
-            logger.error(f"Error calling company service at {full_url}: {e}", exc_info=True)
+            logger.error(
+                f"Error calling company service at {full_url}: {e}", exc_info=True
+            )
             raise
 
 
@@ -70,5 +74,7 @@ async def request_company_score(
             logger.info(f"Company service responded with status {resp.status_code}")
             return resp
         except Exception as e:
-            logger.error(f"Error calling company service at {full_url}: {e}", exc_info=True)
+            logger.error(
+                f"Error calling company service at {full_url}: {e}", exc_info=True
+            )
             raise

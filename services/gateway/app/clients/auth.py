@@ -18,7 +18,9 @@ async def auth_register(payload: Dict[str, Any]) -> httpx.Response:
             logger.info(f"Auth service responded with status {resp.status_code}")
             return resp
         except Exception as e:
-            logger.error(f"Error calling auth service at {full_url}: {e}", exc_info=True)
+            logger.error(
+                f"Error calling auth service at {full_url}: {e}", exc_info=True
+            )
             raise
 
 
@@ -32,5 +34,7 @@ async def auth_login(payload: Dict[str, Any]) -> httpx.Response:
             logger.info(f"Auth service responded with status {resp.status_code}")
             return resp
         except Exception as e:
-            logger.error(f"Error calling auth service at {full_url}: {e}", exc_info=True)
+            logger.error(
+                f"Error calling auth service at {full_url}: {e}", exc_info=True
+            )
             raise

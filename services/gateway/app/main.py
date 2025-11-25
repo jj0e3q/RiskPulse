@@ -5,7 +5,11 @@ from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 
 from app.api.deps import get_current_user_id
-from app.clients import auth as auth_client, company as company_client, scoring as scoring_client
+from app.clients import (
+    auth as auth_client,
+    company as company_client,
+    scoring as scoring_client,
+)
 from app.core.config import settings
 from shared.core.logging import setup_logging
 
