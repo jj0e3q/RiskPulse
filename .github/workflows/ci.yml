@@ -34,23 +34,42 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install ruff black mypy
+        pip install ruff black mypy pytest httpx
     
     - name: Check code formatting with Black
       working-directory: ./services/${{ matrix.service }}
       run: |
-        black --check app/ || true
+        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          black --check app/ tests/
+        else
+          black --check app/ tests/ || true
+        fi
     
     - name: Lint with Ruff
       working-directory: ./services/${{ matrix.service }}
       run: |
-        ruff check app/ || true
+        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          ruff check app/ tests/
+        else
+          ruff check app/ tests/ || true
+        fi
     
     - name: Type check with mypy
       working-directory: ./services/${{ matrix.service }}
       run: |
-        mypy app/ --ignore-missing-imports || true
+        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          mypy app/ --ignore-missing-imports
+        else
+          mypy app/ --ignore-missing-imports || true
+        fi
       continue-on-error: true
+    
+    - name: Run tests with pytest
+      working-directory: ./services/${{ matrix.service }}
+      env:
+        PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/services/${{ matrix.service }}
+      run: |
+        pytest tests/ -v
 
   docker-build:
     runs-on: ubuntu-latest
@@ -65,9 +84,8 @@ jobs:
       uses: docker/setup-buildx-action@v3
     
     - name: Build Docker image
-      working-directory: ./services/${{ matrix.service }}
       run: |
-        docker build -t riskpulse-${{ matrix.service }}:test .
+        docker build -f ./services/${{ matrix.service }}/Dockerfile -t riskpulse-${{ matrix.service }}:test .
     
     - name: Test Docker image
       run: |

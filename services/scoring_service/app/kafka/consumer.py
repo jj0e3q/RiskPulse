@@ -12,5 +12,4 @@ def create_consumer() -> KafkaConsumer:
         value_deserializer=lambda m: json.loads(m.decode("utf-8")),
         enable_auto_commit=True,
         auto_offset_reset="earliest",
-    )
-    return consumer
+    )    return consumer
