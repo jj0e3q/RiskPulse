@@ -1,4 +1,4 @@
-# RiskPulse – Event-Driven Corporate Risk Scoring Engine (EN)
+# RiskPulse – Event-Driven Corporate Risk Scoring Engine
 
 RiskPulse is a microservice-based, event-driven risk scoring platform designed to showcase production-grade architecture, modular service boundaries, Kafka-driven workflows, shared core libraries, and complete CI/CD automation.
 
