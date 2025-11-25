@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def auth_register(payload: Dict[str, Any]) -> httpx.Response:
-    url = str(settings.AUTH_SERVICE_URL).rstrip('/')
+    url = str(settings.AUTH_SERVICE_URL).rstrip("/")
     full_url = f"{url}/auth/register"
     logger.info(f"Calling auth service at {full_url} with payload: {payload}")
     async with httpx.AsyncClient(base_url=url, timeout=10.0) as client:
@@ -23,7 +23,7 @@ async def auth_register(payload: Dict[str, Any]) -> httpx.Response:
 
 
 async def auth_login(payload: Dict[str, Any]) -> httpx.Response:
-    url = str(settings.AUTH_SERVICE_URL).rstrip('/')
+    url = str(settings.AUTH_SERVICE_URL).rstrip("/")
     full_url = f"{url}/auth/login"
     logger.info(f"Calling auth service at {full_url} with payload: {payload}")
     async with httpx.AsyncClient(base_url=url, timeout=10.0) as client:

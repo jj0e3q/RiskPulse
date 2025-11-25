@@ -34,7 +34,7 @@ def get_current_user(
         sub: str | None = payload.get("sub")
         if sub is None:
             raise creds_exception
-    except (ValueError, Exception):
+    except (Exception, ValueError):
         raise creds_exception
 
     user = db.query(User).filter(User.id == sub).first()

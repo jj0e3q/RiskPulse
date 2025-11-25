@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from sqlalchemy import String, DateTime, Column
+from sqlalchemy import Column, DateTime, String
 
 from app.db.base import Base
 

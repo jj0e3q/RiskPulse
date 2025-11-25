@@ -1,7 +1,10 @@
 from datetime import timedelta
 from typing import Any, Optional
 
-from shared.core.jwt import create_access_token as _create_access_token, decode_access_token as _decode_access_token
+from shared.core.jwt import (
+    create_access_token as _create_access_token,
+    decode_access_token as _decode_access_token,
+)
 
 from app.core.config import settings
 

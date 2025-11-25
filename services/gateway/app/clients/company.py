@@ -12,9 +12,11 @@ async def create_company(
     user_id: str,
     payload: Dict[str, Any],
 ) -> httpx.Response:
-    url = str(settings.COMPANY_SERVICE_URL).rstrip('/')
+    url = str(settings.COMPANY_SERVICE_URL).rstrip("/")
     full_url = f"{url}/companies/"
-    logger.info(f"Calling company service at {full_url} with payload: {payload}, user_id: {user_id}")
+    logger.info(
+        f"Calling company service at {full_url} with payload: {payload}, user_id: {user_id}"
+    )
     async with httpx.AsyncClient(base_url=url, timeout=10.0) as client:
         try:
             resp = await client.post(
@@ -33,7 +35,7 @@ async def get_company_by_bin(
     user_id: str,
     bin_value: str,
 ) -> httpx.Response:
-    url = str(settings.COMPANY_SERVICE_URL).rstrip('/')
+    url = str(settings.COMPANY_SERVICE_URL).rstrip("/")
     full_url = f"{url}/companies/by-bin/{bin_value}"
     logger.info(f"Calling company service at {full_url}, user_id: {user_id}")
     async with httpx.AsyncClient(base_url=url, timeout=10.0) as client:
@@ -53,9 +55,11 @@ async def request_company_score(
     user_id: str,
     payload: Dict[str, Any],
 ) -> httpx.Response:
-    url = str(settings.COMPANY_SERVICE_URL).rstrip('/')
+    url = str(settings.COMPANY_SERVICE_URL).rstrip("/")
     full_url = f"{url}/companies/score-request"
-    logger.info(f"Calling company service at {full_url} with payload: {payload}, user_id: {user_id}")
+    logger.info(
+        f"Calling company service at {full_url} with payload: {payload}, user_id: {user_id}"
+    )
     async with httpx.AsyncClient(base_url=url, timeout=10.0) as client:
         try:
             resp = await client.post(
