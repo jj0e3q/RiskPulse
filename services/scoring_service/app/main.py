@@ -46,7 +46,9 @@ def consumer_loop():
                     )
                     try:
                         calculate_and_save_score(db, company_id)
-                        logging.info("Score calculated and saved for company_id=%s", company_id)
+                        logging.info(
+                            "Score calculated and saved for company_id=%s", company_id
+                        )
                     except Exception as e:
                         logging.error("Error calculating score: %s", e)
             finally:
@@ -72,10 +74,14 @@ def get_company_score(company_id: str, db: Session = Depends(get_db)):
     try:
         score = get_latest_score(db, company_id)
         if not score:
-            raise HTTPException(status_code=404, detail="Score not found for this company")
+            raise HTTPException(
+                status_code=404, detail="Score not found for this company"
+            )
         return score
     except HTTPException:
         raise
     except Exception as e:
-        logging.error(f"Error getting score for company_id={company_id}: {e}", exc_info=True)
+        logging.error(
+            f"Error getting score for company_id={company_id}: {e}", exc_info=True
+        )
         raise HTTPException(status_code=500, detail="Internal server error")

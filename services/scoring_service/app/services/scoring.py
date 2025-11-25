@@ -9,10 +9,7 @@ def compute_score(events: Iterable[NormalizedEvent]) -> tuple[int, str, dict]:
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(days=365)
 
-    filtered = [
-        e for e in events
-        if (e.event_date or e.created_at) >= cutoff
-    ]
+    filtered = [e for e in events if (e.event_date or e.created_at) >= cutoff]
 
     base_score = 100
     score = base_score

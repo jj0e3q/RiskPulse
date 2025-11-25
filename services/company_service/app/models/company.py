@@ -15,7 +15,9 @@ class Company(Base):
         primary_key=True,
         default=lambda: str(uuid4()),
     )
-    bin: Mapped[str] = mapped_column(String(20), unique=True, index=True, nullable=False)
+    bin: Mapped[str] = mapped_column(
+        String(20), unique=True, index=True, nullable=False
+    )
     name: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -168,7 +168,9 @@ async def gateway_get_company_by_bin(
     user_id: str = Depends(get_current_user_id),
 ):
     try:
-        resp = await company_client.get_company_by_bin(user_id=user_id, bin_value=bin_value)
+        resp = await company_client.get_company_by_bin(
+            user_id=user_id, bin_value=bin_value
+        )
     except httpx.ConnectError as e:
         logger.error(f"Failed to connect to company service: {e}")
         raise HTTPException(

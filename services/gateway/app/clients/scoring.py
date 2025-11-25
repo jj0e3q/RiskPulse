@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 async def get_company_score(company_id: str) -> httpx.Response:
     url = str(settings.SCORING_SERVICE_URL).rstrip("/")
     full_url = f"{url}/scores/{company_id}"
-    logger.info(
-        f"Calling scoring service at {full_url}, company_id: {company_id}"
-    )
+    logger.info(f"Calling scoring service at {full_url}, company_id: {company_id}")
     async with httpx.AsyncClient(base_url=url, timeout=10.0) as client:
         try:
             resp = await client.get(f"/scores/{company_id}")

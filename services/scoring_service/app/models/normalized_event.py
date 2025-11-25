@@ -23,7 +23,9 @@ class NormalizedEvent(Base):
     description: Mapped[str] = mapped_column(String(500), nullable=False)
     source: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    event_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    event_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     meta: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
 

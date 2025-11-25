@@ -16,4 +16,3 @@ def test_config():
 
     assert settings.KAFKA_BOOTSTRAP_SERVERS
     assert settings.DATABASE_URL
-

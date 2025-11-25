@@ -15,7 +15,9 @@ def classify_events(raw_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         text_lower = text.lower()
 
-        if any(word in text_lower for word in ["банкротство", "liquidation", "банкрот"]):
+        if any(
+            word in text_lower for word in ["банкротство", "liquidation", "банкрот"]
+        ):
             event_type = "bankruptcy_risk"
             severity = "high"
             description = "Potential bankruptcy-related signal detected"
