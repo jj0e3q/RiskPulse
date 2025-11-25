@@ -1,0 +1,244 @@
+{
+  "info": {
+    "name": "RiskPulse",
+    "_postman_id": "e4c5c7d0-1234-4567-89ab-000000000000",
+    "description": "RiskPulse – event-driven risk scoring engine. Full flow: auth → company → score.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"StrongPass123!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"StrongPass123!\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.environment.set(\"access_token\", json.access_token);",
+                  "}",
+                  "",
+                  "console.log(\"Access token set:\", pm.environment.get(\"access_token\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Company",
+      "item": [
+        {
+          "name": "Create company",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/companies",
+              "host": ["{{base_url}}"],
+              "path": ["companies"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bin\": \"123456789012\",\n  \"name\": \"Test Company Ltd.\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201 or 200\", function () {",
+                  "    pm.expect(pm.response.code === 201 || pm.response.code === 200).to.be.true;",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json.id) {",
+                  "    pm.environment.set(\"company_id\", json.id);",
+                  "}",
+                  "if (json.bin) {",
+                  "    pm.environment.set(\"company_bin\", json.bin);",
+                  "}",
+                  "console.log(\"Company id:\", pm.environment.get(\"company_id\"));",
+                  "console.log(\"Company bin:\", pm.environment.get(\"company_bin\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get company by BIN",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/companies/by-bin/{{company_bin}}",
+              "host": ["{{base_url}}"],
+              "path": ["companies", "by-bin", "{{company_bin}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Score",
+      "item": [
+        {
+          "name": "Request score",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/score/request",
+              "host": ["{{base_url}}"],
+              "path": ["score", "request"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bin\": \"{{company_bin}}\",\n  \"name\": \"Test Company Ltd.\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json.company_id) {",
+                  "    pm.environment.set(\"company_id\", json.company_id);",
+                  "}",
+                  "if (json.bin) {",
+                  "    pm.environment.set(\"company_bin\", json.bin);",
+                  "}",
+                  "console.log(\"Score requested for company:\", pm.environment.get(\"company_id\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get score by company_id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/score/{{company_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["score", "{{company_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "company_id",
+      "value": ""
+    },
+    {
+      "key": "company_bin",
+      "value": "123456789012"
+    }
+  ]
+}
