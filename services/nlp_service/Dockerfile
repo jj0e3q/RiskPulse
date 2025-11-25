@@ -10,13 +10,14 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
  && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY services/nlp_service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app ./app
-COPY alembic.ini .
-COPY alembic ./alembic
+COPY shared ./shared
+COPY services/nlp_service/app ./app
+COPY services/nlp_service/alembic.ini .
+COPY services/nlp_service/alembic ./alembic
 
 ENV DATABASE_URL=postgresql+psycopg2://riskpulse:riskpulse@postgres:5432/riskpulse
 
-CMD alembic upgrade head && python -m app.main
+CMD ["sh", "-c", "alembic upgrade head && python -m app.main"]
