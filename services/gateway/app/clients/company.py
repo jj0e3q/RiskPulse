@@ -1,5 +1,5 @@
-from typing import Any, Dict
 import logging
+from typing import Any, Dict
 
 import httpx
 
@@ -47,6 +47,7 @@ async def get_company_by_bin(
         except Exception as e:
             logger.error(f"Error calling company service at {full_url}: {e}", exc_info=True)
             raise
+
 
 async def request_company_score(
     user_id: str,

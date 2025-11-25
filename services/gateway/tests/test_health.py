@@ -16,4 +16,3 @@ def test_health_endpoint(client):
     data = response.json()
     assert data["status"] == "ok"
     assert data["service"] == "gateway"
-

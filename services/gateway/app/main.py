@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Request, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
-import httpx
 import logging
 
-from app.core.config import settings
-from app.clients import auth as auth_client, scoring as scoring_client
-from app.clients import company as company_client
+import httpx
+from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
+
 from app.api.deps import get_current_user_id
+from app.clients import auth as auth_client, company as company_client, scoring as scoring_client
+from app.core.config import settings
 from shared.core.logging import setup_logging
 
 setup_logging(settings.SERVICE_NAME)
@@ -30,28 +30,28 @@ async def gateway_register(request: Request):
         logger.error(f"Failed to parse request JSON: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid JSON in request body"
+            detail="Invalid JSON in request body",
         )
-    
+
     try:
         resp = await auth_client.auth_register(payload)
     except httpx.ConnectError as e:
         logger.error(f"Failed to connect to auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Auth service is unavailable"
+            detail="Auth service is unavailable",
         )
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Auth service request timeout"
+            detail="Auth service request timeout",
         )
     except Exception as e:
         logger.error(f"Unexpected error calling auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calling auth service: {str(e)}"
+            detail=f"Error calling auth service: {str(e)}",
         )
     try:
         content = resp.json() if resp.content else {}
@@ -72,28 +72,28 @@ async def gateway_login(request: Request):
         logger.error(f"Failed to parse request JSON: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid JSON in request body"
+            detail="Invalid JSON in request body",
         )
-    
+
     try:
         resp = await auth_client.auth_login(payload)
     except httpx.ConnectError as e:
         logger.error(f"Failed to connect to auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Auth service is unavailable"
+            detail="Auth service is unavailable",
         )
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Auth service request timeout"
+            detail="Auth service request timeout",
         )
     except Exception as e:
         logger.error(f"Unexpected error calling auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calling auth service: {str(e)}"
+            detail=f"Error calling auth service: {str(e)}",
         )
 
     try:
@@ -106,11 +106,13 @@ async def gateway_login(request: Request):
         content=content,
     )
 
+
 @app.get("/me", tags=["auth"])
 async def get_me(
     user_id: str = Depends(get_current_user_id),
 ):
     return {"user_id": user_id}
+
 
 @app.post("/companies", tags=["companies"])
 async def gateway_create_company(
@@ -123,28 +125,28 @@ async def gateway_create_company(
         logger.error(f"Failed to parse request JSON: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid JSON in request body"
+            detail="Invalid JSON in request body",
         )
-    
+
     try:
         resp = await company_client.create_company(user_id=user_id, payload=payload)
     except httpx.ConnectError as e:
         logger.error(f"Failed to connect to company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Company service is unavailable"
+            detail="Company service is unavailable",
         )
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Company service request timeout"
+            detail="Company service request timeout",
         )
     except Exception as e:
         logger.error(f"Unexpected error calling company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calling company service: {str(e)}"
+            detail=f"Error calling company service: {str(e)}",
         )
 
     try:
@@ -169,19 +171,19 @@ async def gateway_get_company_by_bin(
         logger.error(f"Failed to connect to company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Company service is unavailable"
+            detail="Company service is unavailable",
         )
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Company service request timeout"
+            detail="Company service request timeout",
         )
     except Exception as e:
         logger.error(f"Unexpected error calling company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calling company service: {str(e)}"
+            detail=f"Error calling company service: {str(e)}",
         )
 
     try:
@@ -193,6 +195,7 @@ async def gateway_get_company_by_bin(
         status_code=resp.status_code,
         content=content,
     )
+
 
 @app.post("/score/request", tags=["score"])
 async def gateway_request_score(
@@ -205,9 +208,9 @@ async def gateway_request_score(
         logger.error(f"Failed to parse request JSON: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid JSON in request body"
+            detail="Invalid JSON in request body",
         )
-    
+
     try:
         resp = await company_client.request_company_score(
             user_id=user_id,
@@ -217,19 +220,19 @@ async def gateway_request_score(
         logger.error(f"Failed to connect to company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Company service is unavailable"
+            detail="Company service is unavailable",
         )
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Company service request timeout"
+            detail="Company service request timeout",
         )
     except Exception as e:
         logger.error(f"Unexpected error calling company service: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calling company service: {str(e)}"
+            detail=f"Error calling company service: {str(e)}",
         )
 
     try:
@@ -242,10 +245,11 @@ async def gateway_request_score(
         content=content,
     )
 
+
 @app.get("/score/{company_id}", tags=["score"])
 async def gateway_get_score(
     company_id: str,
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id),
 ):
     try:
         resp = await scoring_client.get_company_score(company_id)
@@ -253,19 +257,19 @@ async def gateway_get_score(
         logger.error(f"Failed to connect to scoring service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Scoring service is unavailable"
+            detail="Scoring service is unavailable",
         )
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to scoring service: {e}")
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Scoring service request timeout"
+            detail="Scoring service request timeout",
         )
     except Exception as e:
         logger.error(f"Unexpected error calling scoring service: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calling scoring service: {str(e)}"
+            detail=f"Error calling scoring service: {str(e)}",
         )
 
     try:
